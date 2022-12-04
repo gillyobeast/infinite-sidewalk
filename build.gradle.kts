@@ -12,9 +12,9 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jgrapht:jgrapht-core:1.5.1")
     testImplementation(kotlin("test"))
 }
-
 tasks.test {
     useJUnitPlatform()
 }
