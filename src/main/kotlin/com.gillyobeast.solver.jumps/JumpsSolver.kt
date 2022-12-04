@@ -6,30 +6,26 @@ import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.builder.GraphBuilder
 import kotlin.system.measureTimeMillis
 
-class JumpsSolver(private val target: Int, private val initialSize: Int = target * 10) {
+class JumpsSolver(private val initialSize: Int) {
 
-    fun run() {
-        val (graph) = generateGraph()
+    private val graph = generateGraph()
+    private val pathFinder = DijkstraShortestPath(graph)
 
-        val pathFinder = DijkstraShortestPath(graph)
-
-        val sp = pathFinder.getPath(0, target)
-
-        println("Jumps from 0 to $target: ${sp?.length ?: "unknown"}")
+    fun run(target: Int): Int? {
+        return pathFinder.getPath(0, target)?.length
     }
 
-    fun generateGraph(): Pair<DefaultDirectedGraph<Int, DefaultEdge>,
-            GraphBuilder<Int, DefaultEdge, DefaultDirectedGraph<Int, DefaultEdge>>> {
-        val map = generateSequence()
+    fun generateGraph(): DefaultDirectedGraph<Int, DefaultEdge> {
+        val seq = generateSequence()
 //            .onEach (::println)
             .take(initialSize + 1)
 
         val graph = DefaultDirectedGraph<Int, DefaultEdge>(DefaultEdge::class.java)
         val builder = GraphBuilder(graph)
 
-        map.forEach { it.addTo(builder) }
+        seq.forEach { it.addTo(builder) }
 
-        return graph to builder
+        return graph
 
 
     }
@@ -56,8 +52,10 @@ private operator fun Pair<Int, Int>.inc(): Pair<Int, Int> = this.first + 1 to th
 
 fun main() {
     measureTimeMillis {
+        val solver = JumpsSolver(initialSize = 20_000)
         for (n in 1..10_000) {
-            JumpsSolver(target = n).run()
+            val sp = solver.run(target = n)
+            println("Jumps from 0 to $n: ${sp ?: "unknown"}")
         }
     }.also { println("${it}ms") }
 }
