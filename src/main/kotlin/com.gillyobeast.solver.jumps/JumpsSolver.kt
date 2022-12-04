@@ -52,9 +52,10 @@ private operator fun Pair<Int, Int>.inc(): Pair<Int, Int> = this.first + 1 to th
 
 fun main() {
     {
-        val runs = 100_000
-        val solver = JumpsSolver(initialSize = 2 * runs)
-        for (n in 1.rangeTo(runs).step(100)) {
+        val runs = 1000
+        val start = 100 * runs
+        val solver = JumpsSolver(initialSize = 10 * start)
+        for (n in start.rangeTo(start + runs)) {
             {
                 val sp = solver.run(target = n)
                 print("Jumps from 0 to $n: ${sp ?: "unknown"}")
