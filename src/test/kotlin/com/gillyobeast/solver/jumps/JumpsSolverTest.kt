@@ -8,7 +8,7 @@ class JumpsSolverTest {
 
     @Test
     fun `generateGraph() returns the right vertices`() {
-        val graph = JumpsSolver(jumps = 100).generateGraph()
+        val (graph, _) = JumpsSolver(target = 100).generateGraph()
 
         for (n: Int in 0..150) {
             if (n in edgesNotToMatch)

@@ -1,31 +1,37 @@
 package com.gillyobeast.solver.jumps
 
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.builder.GraphBuilder
+import kotlin.system.measureTimeMillis
 
-class JumpsSolver(private val jumps: Int, private val target: Int = jumps) {
+class JumpsSolver(private val target: Int, private val initialSize: Int = target * 10) {
 
     fun run() {
-        val graph: DefaultDirectedGraph<Int, DefaultEdge> =
-            generateGraph()
+        val (graph) = generateGraph()
 
-//        graph.vertexSet().sorted().forEach(::println)
-//        graph.edgeSet().forEach(::println)
+        val pathFinder = DijkstraShortestPath(graph)
 
+        val sp = pathFinder.getPath(0, target)
+
+        println("Jumps from 0 to $target: ${sp?.length ?: "unknown"}")
     }
 
-    fun generateGraph(): DefaultDirectedGraph<Int, DefaultEdge> {
+    fun generateGraph(): Pair<DefaultDirectedGraph<Int, DefaultEdge>,
+            GraphBuilder<Int, DefaultEdge, DefaultDirectedGraph<Int, DefaultEdge>>> {
         val map = generateSequence()
-            .take(jumps + 1)
-        //        map.forEach(::println)
+//            .onEach (::println)
+            .take(initialSize + 1)
 
-        val graph: DefaultDirectedGraph<Int, DefaultEdge> =
-            DefaultDirectedGraph(DefaultEdge::class.java)
+        val graph = DefaultDirectedGraph<Int, DefaultEdge>(DefaultEdge::class.java)
         val builder = GraphBuilder(graph)
 
         map.forEach { it.addTo(builder) }
-        return graph
+
+        return graph to builder
+
+
     }
 
     private fun Pair<Int, Int>.addTo(
@@ -34,7 +40,7 @@ class JumpsSolver(private val jumps: Int, private val target: Int = jumps) {
         val (n, jump) = this
         builder.addEdge(n, n + jump)
         if (n > jump)
-        builder.addEdge(n, n - jump)
+            builder.addEdge(n, n - jump)
     }
 
     private fun generateSequence() =
@@ -46,6 +52,12 @@ class JumpsSolver(private val jumps: Int, private val target: Int = jumps) {
     }
 }
 
+private operator fun Pair<Int, Int>.inc(): Pair<Int, Int> = this.first + 1 to this.second + 1
+
 fun main() {
-    JumpsSolver(jumps = 100, target = 150).run()
+    measureTimeMillis {
+        for (n in 1..10_000) {
+            JumpsSolver(target = n).run()
+        }
+    }.also { println("${it}ms") }
 }
