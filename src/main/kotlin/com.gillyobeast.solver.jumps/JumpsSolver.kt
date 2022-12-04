@@ -29,11 +29,11 @@ class JumpsSolver(private val jumps: Int) {
     }
 
     private fun generateSequence() =
-        generateSequence(1 to 1, this::nextPair)
+        generateSequence(0 to 1, this::nextPair)
 
     private fun nextPair(it: Pair<Int, Int>): Pair<Int, Int> {
         val next = it.first + 1
-        return next to (next + 1) / 2
+        return next to (next / 2) + 1
     }
 }
 
