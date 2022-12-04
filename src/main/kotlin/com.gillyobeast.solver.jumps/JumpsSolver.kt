@@ -51,11 +51,18 @@ class JumpsSolver(private val initialSize: Int) {
 private operator fun Pair<Int, Int>.inc(): Pair<Int, Int> = this.first + 1 to this.second + 1
 
 fun main() {
-    measureTimeMillis {
-        val solver = JumpsSolver(initialSize = 20_000)
-        for (n in 1..10_000) {
-            val sp = solver.run(target = n)
-            println("Jumps from 0 to $n: ${sp ?: "unknown"}")
+    {
+        val runs = 100_000
+        val solver = JumpsSolver(initialSize = 2 * runs)
+        for (n in 1.rangeTo(runs).step(100)) {
+            {
+                val sp = solver.run(target = n)
+                print("Jumps from 0 to $n: ${sp ?: "unknown"}")
+            }.printTime()
         }
-    }.also { println("${it}ms") }
+    }.printTime()
+}
+
+private fun (() -> Unit).printTime() {
+    measureTimeMillis(this).also { println(" - took ${it}ms") }
 }
