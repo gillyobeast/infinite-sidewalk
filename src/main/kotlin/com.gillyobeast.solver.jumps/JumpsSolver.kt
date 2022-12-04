@@ -4,28 +4,37 @@ import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.builder.GraphBuilder
 
-class JumpsSolver(private val jumps: Int) {
+class JumpsSolver(private val jumps: Int, private val target: Int = jumps) {
+
     fun run() {
-        val map = generateSequence()
-            .take(jumps)
-
         val graph: DefaultDirectedGraph<Int, DefaultEdge> =
-            DefaultDirectedGraph(DefaultEdge::class.java)
+            generateGraph()
 
-        val builder = GraphBuilder(graph)
-        map.forEach { builder.addJumps(it.first, it.second) }
-        graph.vertexSet().sorted().forEach(::println)
+//        graph.vertexSet().sorted().forEach(::println)
+//        graph.edgeSet().forEach(::println)
 
     }
 
-    private fun GraphBuilder<Int, DefaultEdge, DefaultDirectedGraph<Int, DefaultEdge>>.addJumps(
-        n: Int,
-        jump: Int
+    fun generateGraph(): DefaultDirectedGraph<Int, DefaultEdge> {
+        val map = generateSequence()
+            .take(jumps + 1)
+        //        map.forEach(::println)
+
+        val graph: DefaultDirectedGraph<Int, DefaultEdge> =
+            DefaultDirectedGraph(DefaultEdge::class.java)
+        val builder = GraphBuilder(graph)
+
+        map.forEach { it.addTo(builder) }
+        return graph
+    }
+
+    private fun Pair<Int, Int>.addTo(
+        builder: GraphBuilder<Int, DefaultEdge, DefaultDirectedGraph<Int, DefaultEdge>>
     ) {
-        addEdge(n, n + jump)
-        if (n > jump) {
-            addEdge(n, n - jump)
-        }
+        val (n, jump) = this
+        builder.addEdge(n, n + jump)
+        if (n > jump)
+        builder.addEdge(n, n - jump)
     }
 
     private fun generateSequence() =
@@ -38,5 +47,5 @@ class JumpsSolver(private val jumps: Int) {
 }
 
 fun main() {
-    JumpsSolver(100).run()
+    JumpsSolver(jumps = 100, target = 150).run()
 }

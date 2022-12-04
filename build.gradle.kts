@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation("org.jgrapht:jgrapht-core:1.5.1")
     testImplementation(kotlin("test"))
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 tasks.test {
     useJUnitPlatform()
